@@ -1,0 +1,2 @@
+# Ignore mongodb bind mount
+mongo/data
