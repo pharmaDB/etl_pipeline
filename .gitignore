@@ -1,2 +1,5 @@
-# Ignore mongodb bind mount
+# MongoDB bind mount
 mongo/data
+
+# Neo4j DB bind mount
+neo4j/data

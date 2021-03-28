@@ -21,3 +21,23 @@ services:
     environment:
         - MONGODB_HOST=mongo_local
         - MONGODB_PORT=27017
+
+  neo4j:
+    build:
+      context: .
+      dockerfile: ./compose/neo4j/Dockerfile
+    volumes:
+      - ./neo4j/data:/data
+    ports:
+      - 7473:7473
+      - 7687:7687
+      - 7474:7474
+    environment:
+      - NEO4J_dbms_memory_heap_initial__size=2G
+      - NEO4J_dbms_memory_heap_max__size=4G
+      - NEO4J_dbms_memory_pagecache_size=1G
+      - NEO4J_dbms_active__database=graph.db
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_import_file_use__neo4j__config=true
+      - NEO4J_AUTH=none
