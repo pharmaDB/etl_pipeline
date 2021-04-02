@@ -11,10 +11,7 @@ The Mongo database is exposed at `localhost:27017`. The mongo shell can be acces
 ### Mongo Express
 Access `localhost:8081` for the Mongo Express viewer, which provides a limited UI to explore the data in the Mongo DB.
 
-### Neo4J DB
-Neo4J browser can be accessed via HTTP at `localhost:7474`. Similarly, bolt connection can be established at `localhost:7687`. For more info, refer to the [official docs](https://neo4j.com/docs/operations-manual/current/configuration/connectors/#connectors-available-connectors).
-
 ## Clean Up
 Run `docker-compose down` to stop and remove all containers.
 
-__NOTE__: The Mongo and Neo4J data should be retained at `./mongo/` and `./neo4j/`, respectively.
+__NOTE__: The Mongo data should be retained at `./mongo/`.
