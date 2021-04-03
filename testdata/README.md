@@ -23,10 +23,24 @@ $ mongoimport --db <db_name> --collection <collection_name> --file <local_file.j
 
 ## Generating Test Data for Other NDA Application Numbers
 
-**NOTE** The `sample_data_EDA_import_mongo.ipynb` notebook at [this repo](https://github.com/pharmaDB/data_analysis/tree/main/ds_notebook/notebooks) contains the supporting code for the steps below.
+**NOTE** The `sample_data_EDA_import_mongo.ipynb` notebook at [this repo](https://github.com/pharmaDB/data_analysis/tree/main/ds_notebook/notebooks) contains the supporting code for the steps # 1-4 below. Step #5 exercises the code from the [pharmaDB/dailymed_data_processor](https://github.com/pharmaDB/dailymed_data_processor).
 
-1. Refer to the [Drug Label set ID to NDA number association](https://github.com/pharmaDB/data_analysis/blob/main/ds_notebook/notebooks/spl_id_label_nda.csv). Select some NDA numbers.
-2. Refer to the [Orange Book Association sample data](https://raw.githubusercontent.com/pharmaDB/nber.org-Orange-Book-Data/main/FDA_drug_patents.csv). Use the NDA numbers from step #1 to find the matching patent numbers.
-3. Obtain the USPTO [Patent Claim Research dataset](https://developer.uspto.gov/product/patent-and-patent-application-claims-data-stata-dta-and-ms-excel-csv). Check that the claim data exists for the patents from step #2 (this dataset stops at around 2014). The usage of this dataset is a temporary workaround while we finalize the patent data collection.
-4. Provide the SPL set IDs linked to the chosen NDAs in step #1, to download and populate historical label data into the configured MongoDB, based on the steps in [this repo](https://github.com/pharmaDB/dailymed_data_processor).
-5. Run the last section (patent processing and import) of the notebook `sample_data_EDA_import_mongo.ipynb` at [this repo](https://github.com/pharmaDB/data_analysis/tree/main/ds_notebook/notebooks) to load the patent info into the configured MongoDB instance.
+1. Start by selecting the active ingredients.
+![Jupyter Notebook Orange Book](./assets/orange_book.png)
+
+(This refers to the [Orange Book Association sample data](https://raw.githubusercontent.com/pharmaDB/nber.org-Orange-Book-Data/main/FDA_drug_patents.csv) that is already available in that repo.)
+
+2. Obtain the Set IDs corresponding to the application numbers from step #1.
+![Jupyter Notebook Get Set IDs](./assets/openfda.png)
+
+(This refers to the [Drug Label set ID to NDA number association](https://github.com/pharmaDB/data_analysis/blob/main/ds_notebook/notebooks/spl_id_label_nda.csv) that is already available in that repo.)
+
+3. Obtain the USPTO [Patent Claim Research dataset](https://developer.uspto.gov/product/patent-and-patent-application-claims-data-stata-dta-and-ms-excel-csv) and place it in the data directory. Fitler the claims linked to the patents from step #1.
+![Jupyter Notebook Get Claims](./assets/patent_process.png)
+
+(The usage of this dataset is a temporary workaround while we finalize the patent data collection.)
+
+4. Run the last section of the notebook to load the patent info into the configured MongoDB instance.
+![Jupyter Notebook Import Claims](./assets/patent_import.png)
+
+5. Provide the SPL set IDs from step #2, to download and populate historical label data into the configured MongoDB, based on the steps in [this repo](https://github.com/pharmaDB/dailymed_data_processor).
