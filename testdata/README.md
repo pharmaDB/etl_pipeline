@@ -2,9 +2,21 @@
 
 This folder contains some test data in JSON format that can be imported directly into a MongoDB instance. Steps are described in detail for generating test data using other drug NDA application numbers.
 
+## Schema
+
+The NDA application number can be found in both collections in the `application_numbers` array field.
+
+### Labels
+
+![Labels Schema](./assets/labels_schema.png)
+
+### Patents
+
+![Patents Schema](./assets/patents_schema.png)
+
 ## Importing the JSON Mongo Dump Data
 
-The data covers drugs: `MORPHINE SULFATE`, `MINOXIDIL`
+The data covers drugs: `MORPHINE SULFATE`
 
 **Recommended:** Use the docker-compose config in this repo to start up the DB, which is accompanied by the Mongo Express viewer.
 
@@ -28,7 +40,7 @@ $ mongoimport --db <db_name> --collection <collection_name> --file <local_file.j
 1. Start by selecting the active ingredients.
 ![Jupyter Notebook Orange Book](./assets/orange_book.png)
 
-(This refers to the [Orange Book Association sample data](https://raw.githubusercontent.com/pharmaDB/nber.org-Orange-Book-Data/main/FDA_drug_patents.csv) that is already available in that repo.)
+(This refers to the [Orange Book Association sample data](https://github.com/pharmaDB/data_analysis/blob/main/ds_notebook/notebooks/data/Orange_Book/nber_1985_2016/FDA_drug_patents.csv) that is already available in that repo.)
 
 2. Obtain the Set IDs corresponding to the application numbers from step #1.
 ![Jupyter Notebook Get Set IDs](./assets/openfda.png)
