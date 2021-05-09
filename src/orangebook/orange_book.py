@@ -1,11 +1,13 @@
 from bs4 import BeautifulSoup as bs
 import csv
+from datetime import datetime
 import os
 import requests
 import re
 import shutil
 import zipfile
 
+from db.mongo import connect_mongo, MongoClient
 from utils.logging import getLogger
 
 _logger = getLogger(__name__)
@@ -61,7 +63,7 @@ def parse_csv_data(file_path, sep=","):
                              Defaults to ",".
 
     Returns:
-        list(dict): Each object contains fields 'nda' and 'patent_number'
+        list(dict): Each object contains fields 'nda' and 'patent_num'
     """
     nda_patent_list = []
     with open(file_path) as csvfile:
@@ -72,17 +74,28 @@ def parse_csv_data(file_path, sep=","):
                 nda_patent_list.append(
                     {
                         "nda": row["Appl_No"],
-                        "patent_number": re.sub(
-                            "[^0-9]+", "", row["Patent_No"]
-                        ),
+                        "patent_num": re.sub("[^0-9]+", "", row["Patent_No"]),
                     }
                 )
     return nda_patent_list
 
 
 def save_orange_book_data(rows):
-    # TODO
-    pass
+    mongo_client = MongoClient(connect_mongo())
+    new_records_count = 0
+
+    for row in rows:
+        # Find doc in MongoDB
+        doc = mongo_client.find(
+            MONGO_COLLECTION_NAME,
+            row,
+        )
+        if not doc.count():
+            new_records_count += 1
+            mongo_client.insert(
+                MONGO_COLLECTION_NAME, {**row, "created_at": datetime.now()}
+            )
+    _logger.info(f"Inserted {new_records_count} new Orange Book associations")
 
 
 def process_and_save_to_mongo(file_path, destination_folder_path):
