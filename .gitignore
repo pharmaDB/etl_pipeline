@@ -1,2 +1,13 @@
+# Editor settings
+.vscode/
+
 # MongoDB bind mount
 mongo/data
+
+# Python atrifacts
+__pycache__/
+*.pyc
+*.pyi
+
+# Temp data folder
+tempdata/
