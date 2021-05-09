@@ -98,7 +98,7 @@ def save_orange_book_data(rows):
     _logger.info(f"Inserted {new_records_count} new Orange Book associations")
 
 
-def process_and_save_to_mongo(file_path, destination_folder_path):
+def process_orange_book_and_save_to_mongo(file_path, destination_folder_path):
     """Processes the downloaded Orange Book zip file, saving the
     NDA -> Patent number mappings to MongoDB.
 
@@ -110,7 +110,7 @@ def process_and_save_to_mongo(file_path, destination_folder_path):
     """
     # Check input data
     if not os.path.exists(file_path):
-        _logger.error("Zip File containing latest Orange Book Data not found")
+        _logger.error("Zip File containing latest Orange Book data not found")
         return
 
     # Create the folder to extract the contents into, if not exists
