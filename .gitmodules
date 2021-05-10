@@ -1,0 +1,9 @@
+[submodule "src/dailymed_data_processor"]
+	path = src/submodules/dailymed_data_processor
+	url = https://github.com/pharmaDB/dailymed_data_processor.git
+[submodule "src/uspto_bulk_file_processor_v4"]
+	path = src/submodules/uspto_bulk_file_processor_v4
+	url = https://github.com/pharmaDB/uspto_bulk_file_processor_v4.git
+[submodule "src/scoring_data_processor"]
+	path = src/submodules/scoring_data_processor
+	url = https://github.com/pharmaDB/scoring_data_processor.git

@@ -1,8 +1,9 @@
 from datetime import datetime
 import json
 import os
+import subprocess
 
-from db.mongo import connect_mongo, MongoClient
+from db.mongo import connect_mongo, get_connection_string, MongoClient
 from druglabels.drug_labels import (
     download_latest_labels,
     process_label_metadata_and_save_to_mongo,
@@ -99,16 +100,38 @@ if __name__ == "__main__":
 
     # Output the Set IDs corresponding to the new Orange Book mappings
     # into a local file, for processing in the subsequent steps.
-    file_path = os.path.join(TEMP_DATA_FOLDER, "set_ids.json")
+    setid_file_path = os.path.join(TEMP_DATA_FOLDER, "set_ids.json")
     write_updated_orange_book_set_ids(
-        file_path, since=get_latest_pipeline_run_timestamp()
+        setid_file_path, since=get_latest_pipeline_run_timestamp()
     )
 
     # Download the label data
-    # TBD
+    subprocess.call(
+        [
+            "python3",
+            "submodules/dailymed_data_processor/main.py",
+            f"--set_ids_from_file={setid_file_path}",
+        ]
+    )
 
     # Download the patent data
-    # TBD
+    start_date = started_time.strftime("%Y-%m-%d")
+    end_date = datetime.now().strftime("%Y-%m-%d")
+    conn_string = get_connection_string()
+    subprocess.call(["npm", "run", "build"])
+    subprocess.call(
+        [
+            "npm",
+            "run",
+            "process",
+            "-s={start_date}",
+            "-e={end_date}",
+            "-c={conn_string}",
+        ]
+    )
+
+    # Run scoring data processor
+    subprocess.call(["python3", "submodules/scoring_data_processor/main.py"])
 
     # Update the latest run timestamp to the MongoDB pipeline collection
     set_latest_pipeline_run_timestamp(started_time)

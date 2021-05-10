@@ -55,3 +55,15 @@ def connect_mongo():
     except Exception as e:
         _logger.error(f"Error occured {e}")
         return
+
+
+def get_connection_string():
+    try:
+        host, port = (
+            _config["MONGODB_HOST"],
+            int(_config["MONGODB_PORT"]),
+        )
+        return f"mongodb://{host}:{port}"
+    except Exception as e:
+        _logger.error(f"Error occured {e}")
+        return
