@@ -162,3 +162,18 @@ def process_label_metadata_and_save_to_mongo(
     # Delete all downloaded data
     shutil.rmtree(destination_folder_path)
     os.remove(file_path)
+
+
+def get_label_mappings_for_ndas(ndas=[]):
+    """Returns the mongo DB label mappings for the input NDA numbers
+
+    Args:
+        ndas (list, optional): The NDA application numbers in string format,
+                               without leading "NDA" or zeros. Defaults to [].
+    """
+
+    results = _mongo_client.find(
+        MONGO_COLLECTION_NAME,
+        {"nda": {"$in": ndas}},
+    )
+    return list(results)

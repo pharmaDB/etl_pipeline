@@ -1,12 +1,17 @@
+from datetime import datetime
+import json
 import os
 
+from db.mongo import connect_mongo, MongoClient
 from druglabels.drug_labels import (
     download_latest_labels,
     process_label_metadata_and_save_to_mongo,
+    get_label_mappings_for_ndas,
 )
 from orangebook.orange_book import (
     download_latest_orange_book,
     process_orange_book_and_save_to_mongo,
+    get_orange_book_mappings_since,
 )
 from utils.logging import getLogger
 
@@ -14,7 +19,55 @@ _logger = getLogger("main")
 
 TEMP_DATA_FOLDER = "tempdata"
 
+MONGO_DB_PIPELINE_COLLECTION = "pipeline"
+
+
+def get_latest_pipeline_run_timestamp():
+    """This function returns the timestamp of the last successful run of the
+    pipeline, or None.
+
+    Returns:
+        datetime: The timestamp field from the first (expected to be only) doc
+                  in the pipeline collection
+    """
+    mongo_client = MongoClient(connect_mongo())
+    doc = mongo_client.find(MONGO_DB_PIPELINE_COLLECTION, {})
+    if not doc.count():
+        return None
+    return doc[0]["timestamp"]
+
+
+def set_latest_pipeline_run_timestamp(timestamp):
+    mongo_client = MongoClient(connect_mongo())
+    mongo_client.upsert(
+        MONGO_DB_PIPELINE_COLLECTION, {}, {"timestamp": timestamp}
+    )
+
+
+def write_updated_orange_book_set_ids(file_path, since=None):
+    """This function checks the newly added OrangeBook mappings in
+        the MongoDB database to identify the updated NDA numbers.
+        The corresponding DailyMed set IDs are written to a local file
+        so that they can be downloaded and processed by the label processing
+        module.
+
+    Args:
+        file_path (str): The path at which to write the DailyMed set ID list
+                         in json format
+        since (datettime): The timestamp to act as "from" filter for the query
+    """
+    ob_mappings = get_orange_book_mappings_since(since=since)
+    label_mappings = get_label_mappings_for_ndas(
+        ndas=list(map(lambda x: x["nda"], ob_mappings))
+    )
+    set_ids = list(set(map(lambda x: x["set_id"], label_mappings)))
+    with open(file_path, "w+") as f:
+        f.write(json.dumps(set_ids))
+
+
 if __name__ == "__main__":
+    started_time = datetime.now()
+
     # Create temp data folder if not exists
     if not os.path.exists(TEMP_DATA_FOLDER):
         os.mkdir(TEMP_DATA_FOLDER)
@@ -43,3 +96,19 @@ if __name__ == "__main__":
             TEMP_DATA_FOLDER, "drug_labels_data"
         ),
     )
+
+    # Output the Set IDs corresponding to the new Orange Book mappings
+    # into a local file, for processing in the subsequent steps.
+    file_path = os.path.join(TEMP_DATA_FOLDER, "set_ids.json")
+    write_updated_orange_book_set_ids(
+        file_path, since=get_latest_pipeline_run_timestamp()
+    )
+
+    # Download the label data
+    # TBD
+
+    # Download the patent data
+    # TBD
+
+    # Update the latest run timestamp to the MongoDB pipeline collection
+    set_latest_pipeline_run_timestamp(started_time)
