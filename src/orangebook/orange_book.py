@@ -142,3 +142,21 @@ def process_orange_book_and_save_to_mongo(file_path, destination_folder_path):
     # Delete the extracted files and the original zip file
     shutil.rmtree(destination_folder_path)
     os.remove(file_path)
+
+
+def get_orange_book_mappings_since(since=None):
+    """Returns all the Orange Book mappings in the DB. If the
+    "since" filter is set, only the records created after the specified
+    timestamp are returned.
+
+    Args:
+        since (datetime, optional): The time since which the mappings in the DB
+        should be filtered, on the created_at column. Defaults to None.
+    """
+    mongo_client = MongoClient(connect_mongo())
+    query = {}
+
+    if since:
+        query = {"created_at": {"$gt": since}}
+
+    return mongo_client.find(MONGO_COLLECTION_NAME, query)
