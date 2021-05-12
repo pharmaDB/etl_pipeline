@@ -18,7 +18,7 @@ $ cd src/submodules/uspto_bulk_file_processor_v4
 $ npm install
 $ npm run build
 ```
-3. Install the Python project dependencies in the submodules. Also, start the file server (for the CSV export download) in the background, from the scoring submodule.
+3. Install the Python project dependencies in the submodules. Also, start the file server (for the CSV export download) in the background, from the scoring submodule (more context on this can be found in the main [README](https://github.com/pharmaDB/PharmaDB-README#running-the-pharmadb-back-end-infrastructure)).
 ```
 $ cd src/submodules/dailymed_data_processor
 $ pip3 install -r requirements.txt
