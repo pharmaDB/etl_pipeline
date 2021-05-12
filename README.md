@@ -15,6 +15,7 @@ $ git clone --recurse-submodules https://github.com/pharmaDB/etl_pipeline.git
 2. Build the `node` project for the patent data collection.
 ```
 $ cd src/submodules/uspto_bulk_file_processor_v4
+$ npm install
 $ npm run build
 ```
 3. If using a local MongoDB server, the `docker-compose` set up provided in this repo can be used. Follow the steps in the subsequent section to start the server.
