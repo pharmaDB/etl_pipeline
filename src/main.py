@@ -118,20 +118,24 @@ if __name__ == "__main__":
     start_date = started_time.strftime("%Y-%m-%d")
     end_date = datetime.now().strftime("%Y-%m-%d")
     conn_string = get_connection_string()
-    subprocess.call(["npm", "run", "build"])
     subprocess.call(
         [
-            "npm",
-            "run",
-            "process",
-            "-s={start_date}",
-            "-e={end_date}",
-            "-c={conn_string}",
+            "node",
+            "submodules/uspto_bulk_file_processor_v4/out/index.js",
+            "--patent-number-file=patents.json",
+            f"--start-date={start_date}",
+            f"--end-date={end_date}",
+            f"--connection-string={conn_string}",
         ]
     )
 
-    # Run scoring data processor
+    # Run scoring data processor on the new data
     subprocess.call(["python3", "submodules/scoring_data_processor/main.py"])
+
+    # Export the results of the scoring
+    subprocess.call(
+        ["python3", "submodules/scoring_data_processor/main.py", "-db2csv"]
+    )
 
     # Update the latest run timestamp to the MongoDB pipeline collection
     set_latest_pipeline_run_timestamp(started_time)
