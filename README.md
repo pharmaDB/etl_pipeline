@@ -59,3 +59,10 @@ Access `localhost:8081` for the Mongo Express viewer, which provides a limited U
 Run `docker-compose down` to stop and remove all containers.
 
 __NOTE__: The Mongo data should be retained at `./mongo/`.
+
+## Running Tests
+
+Unit tests are created using Pytest and can be run simply using the following command, from the repo root.
+```
+$ PYTHONPATH=src/ pytest tests/ -vv
+```
