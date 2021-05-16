@@ -30,8 +30,9 @@ $ sudo nohup python3 server.py &
 ```
 4. If using a local MongoDB server, the `docker-compose` set up provided in this repo can be used. Follow the steps in the subsequent section to start the server.
 5. If NOT using a local MongoDB server, update the `.env` files in the root of this repo and each of the submodules with the host/port (and optionally, the DB name).
-6. Run the pipeline script from the `src/` folder using `python3 main.py`. The script can also be run monthly, as a cron job. Eg: `0 0 1 * * python3 main.py`. This can be saved to the cron file using `crontab -e`.
-7. Upon successful pipeline run, the data in MongoDB should be updated. As a quick check, the `pipeline` collection should show the updated timestamp for the latest successful run. The CSV export of the DB should also be updated in `submodules/scoring_data_processor/resources/hosted_folder/db2csv.zip`.
+6. Follow the steps in the [main README](https://github.com/pharmaDB/PharmaDB-README#importing-the-bulk-data-for-the-first-run) on importing data into the database, for the first run.
+7. Run the pipeline script from the `src/` folder using `python3 main.py`. The script can also be run monthly, as a cron job. Eg: `0 0 1 * * python3 main.py`. This can be saved to the cron file using `crontab -e`.
+8. Upon successful pipeline run, the data in MongoDB should be updated. As a quick check, the `pipeline` collection should show the updated timestamp for the latest successful run. The CSV export of the DB should also be updated in `submodules/scoring_data_processor/resources/hosted_folder/db2csv.zip`.
 
 ### Pipeline Methodology
 

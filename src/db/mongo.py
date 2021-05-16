@@ -59,11 +59,12 @@ def connect_mongo():
 
 def get_connection_string():
     try:
-        host, port = (
+        host, port, db_name = (
             _config["MONGODB_HOST"],
             int(_config["MONGODB_PORT"]),
+            _config["MONGODB_NAME"],
         )
-        return f"mongodb://{host}:{port}"
+        return f"mongodb://{host}:{port}/{db_name}"
     except Exception as e:
         _logger.error(f"Error occured {e}")
         return
