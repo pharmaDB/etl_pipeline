@@ -68,6 +68,7 @@ def write_updated_orange_book_set_ids(file_path, since=None):
 
 if __name__ == "__main__":
     started_time = datetime.now()
+    last_run_time = get_latest_pipeline_run_timestamp()
 
     # Create temp data folder if not exists
     if not os.path.exists(TEMP_DATA_FOLDER):
@@ -101,9 +102,7 @@ if __name__ == "__main__":
     # Output the Set IDs corresponding to the new Orange Book mappings
     # into a local file, for processing in the subsequent steps.
     setid_file_path = os.path.join(TEMP_DATA_FOLDER, "set_ids.json")
-    write_updated_orange_book_set_ids(
-        setid_file_path, since=get_latest_pipeline_run_timestamp()
-    )
+    write_updated_orange_book_set_ids(setid_file_path, since=last_run_time)
 
     # Download the label data
     subprocess.call(
@@ -115,19 +114,22 @@ if __name__ == "__main__":
     )
 
     # Download the patent data
-    start_date = started_time.strftime("%Y-%m-%d")
     end_date = datetime.now().strftime("%Y-%m-%d")
     conn_string = get_connection_string()
-    subprocess.call(
-        [
-            "node",
-            "submodules/uspto_bulk_file_processor_v4/out/index.js",
-            "--patent-number-file=patents.json",
-            f"--start-date={start_date}",
-            f"--end-date={end_date}",
-            f"--connection-string={conn_string}",
-        ]
-    )
+    download_command = [
+        "node",
+        "submodules/uspto_bulk_file_processor_v4/out/index.js",
+        "--patent-number-file=patents.json",
+        f"--end-date={end_date}",
+        f"--connection-string={conn_string}",
+        "--patent-number-file=empty_filter.json",
+    ]
+    if last_run_time:
+        start_date = last_run_time.strftime("%Y-%m-%d")
+        download_command.append(f"--start-date={start_date}")
+    subprocess.call(['echo "[]" > empty_filter.json'], shell=True)
+    subprocess.call(download_command)
+    os.remove("empty_filter.json")
 
     # Run scoring data processor on the new data
     subprocess.call(["python3", "submodules/scoring_data_processor/main.py"])
